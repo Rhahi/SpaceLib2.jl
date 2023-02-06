@@ -1,0 +1,7 @@
+name = "SpaceLib2"
+uuid = "d0d23ed4-409d-4adc-bcb3-659043b36056"
+authors = ["Rhahi <git@rhahi.com>"]
+version = "0.1.0"
+
+[deps]
+KRPC = "7a052949-c101-4ca3-9a7e-43a2532b2fa8"
