@@ -179,3 +179,50 @@ function ut_periodic_stream(f::Function, ts::Timeserver, period::Real)
         close(coarse_channel)
     end
 end
+
+"""
+    @time_resolution
+
+Pre-compute time resolution to be used across timing functions.
+
+The time resolution KSP has is about 0.02 seconds. Half of that duraction is
+needed to match this time resolution.
+"""
+macro time_resolution()
+    return Float64(0.019999999552965164 / 2)
+end
+
+"""
+    delay(ts::Timeserver, seconds::Real, name=nothing; parentid=nothing)
+
+Wait for in-game seconds to pass.
+"""
+function delay(ts::Timeserver, seconds::Real, name=nothing; parentid=nothing)
+    @debug "delay $seconds" _group=:time
+    if seconds < 0.02
+        @warn "Given time delay is shorter than time resolution (0.02 seconds)" _group=:time
+    end
+    t₀ = ts.time
+    t₁ = t₀
+    # id = progress_init(parentid, name)
+    try
+        ut_stream(ts) do stream
+            for now in stream
+                t₁ = now
+                # progress_update(id, min(1, (now-t₀) / seconds), name)
+                (now - t₀) ≥ (seconds - @time_resolution) && break
+                yield()
+            end
+            @debug "delay $seconds complete" _group=:time
+        end
+    catch e
+        if isa(e, InterruptException)
+            @info "delay interrupted: $name" _group=:time
+        else
+            error(e)
+        end
+    finally
+        # progress_end(id, name)
+    end
+    return t₀, t₁
+end
