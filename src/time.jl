@@ -48,30 +48,34 @@ function Timeserver()
     Timeserver(stream)
 end
 
-Base.close(ts::Timeserver) = close(ts.clients)
+
+next_value!(stream::KRPC.Listener) = KRPC.next_value(stream)
+next_value!(channel::Channel) = take!(channel)
 
 "Fetch updated timestamp and publish it to clients"
 function start_time_server!(ts::Timeserver, stream::Union{Channel{Tuple{Float64}}, KRPC.Listener})
     @async begin
         try
             running = true
+            @info "Starting time server" _group=:system
             while running
-                ts.ut, = take!(stream)
+                ts.time, = next_value!(stream)
                 index_offset = 0
                 for (index, client) in enumerate(ts.clients)
                     if index == 0 && !isopen(client)
                         # control channel has been closed. Shutdown timeserver.
+                        @info "Shutting down time server" _group=:system
                         running = false
                         break
                     end
                     try
-                        !isready(client) && put!(client, ts.ut)
+                        !isready(client) && put!(client, ts.time)
                     catch e
                         # if a client is closed, we will get InvalidStateException.
                         # then remove the client from the list and proceed.
                         # otherwise, we have a different problem.
                         if !isa(e, InvalidStateException)
-                            @error "Time server has crashed" ts.ut
+                            @error "Time server has crashed" _group=:system
                             error(e)
                         end
                         client = popat!(ts.clients, index - index_offset)
