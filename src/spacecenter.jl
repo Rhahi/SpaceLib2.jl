@@ -20,3 +20,12 @@ function SpaceCenter(name::String, host::String, port::Integer, stream_port::Int
     crafts = Array{Spacecraft, 1}()
     return SpaceCenter(conn, SCR.SpaceCenter(conn), Timeserver(conn), crafts)
 end
+
+function Base.show(io::IO, sc::SpaceCenter)
+    status = isopen(sc.conn.conn) ? "open" : "closed"
+    print(io, "SpaceCenter ($status)")
+    for sp in sc.crafts
+        print(io, "\n  - $sp")
+    end
+end
+

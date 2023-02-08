@@ -57,3 +57,13 @@ function Base.close(sp::Spacecraft)
     end
     close(sp.ts)
 end
+
+function Base.show(io::IO, sp::Spacecraft)
+    name = nothing
+    try
+        name = SCH.Name(sp.ves)
+        print(io, name)
+    catch
+        print(io, "Unknown spacecraft")
+    end
+end
