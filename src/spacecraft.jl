@@ -19,23 +19,7 @@ struct Spacecraft
     parts::Dict{Symbol, SCR.Part}
     events::Dict{Symbol, Condition}
     contch::ControlChannels
-    ts::METServer
-end
-
-struct ControlChannels
-    engage::Channel{Bool}
-    throttle::Channel{Float32}
-    roll::Channel{Float32}
-    direction::Channel{NTuple{3, Float64}}
-    rcs::Channel{NTuple{3, Float64}}
-    function ControlChannels()
-        e = Channel{Bool}(1)
-        t = Channel{Float32}(1)
-        r = Channel{Float32}(1)
-        d = Channel{NTuple{3, Float64}}(1)
-        rcs = Channel{NTuple{3, Float64}}(1)
-        new(e, t, r, d, rcs)
-    end
+    ts::Timeserver
 end
 
 function Base.close(sp::Spacecraft)
