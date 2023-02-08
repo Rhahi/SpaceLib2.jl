@@ -1,5 +1,6 @@
 module SpaceLib2
 
+using ErrorTypes
 using KRPC
 import KRPC.Interface.SpaceCenter as SC
 import KRPC.Interface.SpaceCenter.RemoteTypes as SCR
@@ -11,6 +12,6 @@ include("spacecraft.jl")
 include("spacecenter.jl")
 
 export SpaceCenter, Spacecraft, ControlChannels, Timeserver
-export ut_stream, ut_periodic_stream, delay
+export connect, ut_stream, ut_periodic_stream, delay
 
 end # module SpaceLib2

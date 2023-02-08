@@ -4,4 +4,5 @@ authors = ["Rhahi <git@rhahi.com>"]
 version = "0.1.0"
 
 [deps]
+ErrorTypes = "7f495686-c6d2-4c77-9e8e-e4c865675f9d"
 KRPC = "7a052949-c101-4ca3-9a7e-43a2532b2fa8"
