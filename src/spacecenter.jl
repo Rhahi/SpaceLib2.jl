@@ -10,7 +10,7 @@ Represents connection to KRPC. Should persist while the game is running.
 """
 struct SpaceCenter
     conn::KRPC.KRPCConnection
-    sc::SCR.SpaceCenter
+    center::SCR.SpaceCenter
     ts::Timeserver
     crafts::Array{Spacecraft, 1}
 end
