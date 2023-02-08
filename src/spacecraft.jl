@@ -1,4 +1,33 @@
 """
+Shared spacecraft controls. This struct acts as a single access point for
+spacecraft control. Note that this struct does not specify which reference
+frame the vectors use - it should be defined in the control loop.
+
+**fields**
+- `engage` -- toggles autopilot or manual control
+- `throttle` -- throttle value of the spacecraft between 0 and 1. May not have
+    an effect if the engine does not support throttling.
+- `roll` -- desired roll for the spacecraft.
+- `direction` -- desired vector for the spacecraft to point at.
+- `rcs` -- desired RCS input between -1 and 1, in three directions.
+"""
+struct ControlChannels
+    engage::Channel{Bool}
+    throttle::Channel{Float32}
+    roll::Channel{Float32}
+    direction::Channel{NTuple{3, Float64}}
+    rcs::Channel{NTuple{3, Float64}}
+    function ControlChannels()
+        e = Channel{Bool}(1)
+        t = Channel{Float32}(1)
+        r = Channel{Float32}(1)
+        d = Channel{NTuple{3, Float64}}(1)
+        rcs = Channel{NTuple{3, Float64}}(1)
+        new(e, t, r, d, rcs)
+    end
+end
+
+"""
 Spacecraft to be controlled.
 
 **fields**
