@@ -48,6 +48,14 @@ function Timeserver()
     Timeserver(stream)
 end
 
+"""
+    Base.close(ts::Timeserver)
+
+Close the signalling channel, which tells the update loop to stop.
+"""
+function Base.close(ts::Timeserver)
+    close(ts.clients[1])
+end
 
 next_value!(stream::KRPC.Listener) = KRPC.next_value(stream)
 next_value!(channel::Channel) = take!(channel)

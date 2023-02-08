@@ -29,3 +29,8 @@ function Base.show(io::IO, sc::SpaceCenter)
     end
 end
 
+function Base.close(sc::SpaceCenter)
+    close(sc.ts)
+    close(sc.conn.conn)
+end
+
