@@ -15,7 +15,7 @@ struct SpaceCenter
     crafts::Array{Spacecraft, 1}
 end
 
-function SpaceCenter(name, host, port, stream_port)
+function SpaceCenter(name::String, host::String, port::Integer, stream_port::Integer)
     conn = kerbal_connect(name, host, port, stream_port)
     crafts = Array{Spacecraft, 1}()
     return SpaceCenter(conn, SCR.SpaceCenter(conn), Timeserver(conn), crafts)
