@@ -10,6 +10,7 @@ include("time.jl")
 include("spacecraft.jl")
 include("spacecenter.jl")
 
-export SpaceCenter
+export SpaceCenter, Spacecraft, ControlChannels, Timeserver
+export ut_stream, ut_periodic_stream, delay
 
 end # module SpaceLib2
