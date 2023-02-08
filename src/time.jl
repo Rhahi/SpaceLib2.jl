@@ -15,7 +15,8 @@ mutable struct Timeserver
         clients = Vector{Channel{Float64}}()
         push!(clients, signal)
         ts = new(-1, clients)
-        start_time_server!(stream, ts)
+        start_time_server!(ts, stream)
+        ts
     end
 end
 
