@@ -27,6 +27,14 @@ struct ControlChannels
     end
 end
 
+function Base.close(contch::ControlChannels)
+    close(contch.engage)
+    close(contch.throttle)
+    close(contch.roll)
+    close(contch.direction)
+    close(contch.rcs)
+end
+
 """
 Spacecraft to be controlled.
 
@@ -51,10 +59,9 @@ struct Spacecraft
     ts::Timeserver
 end
 
+
 function Base.close(sp::Spacecraft)
-    for fname in fieldnames(typeof(sp))
-        close(getfield(sp, fname))
-    end
+    close(sp.contch)
     close(sp.ts)
 end
 
