@@ -27,8 +27,8 @@ function Timeserver(conn::KRPC.KRPCConnection)
 end
 
 "Start timeserver using Vessel's internal mission time."
-function Timeserver(ves::SCR.Vessel)
-    stream = KRPC.add_stream(conn, (SC.get_MET(ves),))
+function Timeserver(conn::KRPC.KRPCConnection, ves::SCR.Vessel)
+    stream = KRPC.add_stream(conn, (SC.Vessel_get_MET(ves),))
     Timeserver(stream)
 end
 
@@ -70,7 +70,8 @@ function start_time_server!(ts::Timeserver, stream::Union{Channel{Tuple{Float64}
                 ts.time, = next_value!(stream)
                 index_offset = 0
                 for (index, client) in enumerate(ts.clients)
-                    if index == 0 && !isopen(client)
+                    if index == 1
+                        isopen(client) && continue
                         # control channel has been closed. Shutdown timeserver.
                         @info "Shutting down time server" _group=:system
                         running = false
@@ -89,7 +90,7 @@ function start_time_server!(ts::Timeserver, stream::Union{Channel{Tuple{Float64}
                         client = popat!(ts.clients, index - index_offset)
                         index_offset += 1
                         close(client)
-                        @debug "Time channel closed."
+                        @debug "Time channel closed." _group=:time
                     end
                 end
             end
