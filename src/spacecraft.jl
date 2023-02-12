@@ -59,6 +59,28 @@ struct Spacecraft
     ts::Timeserver
 end
 
+function Spacecraft(conn::KRPC.KRPCConnection, ves::SCR.Vessel;
+    name = nothing,
+    parts = Dict{Symbol, SCR.Part}(),
+    events = Dict{Symbol, Condition}(),
+    contch = ControlChannels(),
+    ts = nothing,
+)
+    name = isnothing(name) ? SCH.Name(ves) : name
+    ts = isnothing(ts) ? Timeserver(conn, ves) : ts
+    @async begin
+        try
+            # if time server closes or gets stop signal,
+            # the spacecraft will no longer be controllable.
+            wait(ts.clients[1])
+        finally
+            # close the control channels.
+            @warn "Spacecraft $name has been shut down." _group=:system ts=ts.clients[1]
+            close(contch)
+        end
+    end
+    Spacecraft(name, ves, parts, events, contch, ts)
+end
 
 function Base.close(sp::Spacecraft)
     close(sp.contch)
@@ -73,4 +95,5 @@ function Base.show(io::IO, sp::Spacecraft)
     catch
         print(io, "Unknown spacecraft")
     end
+    print(io, " ($(sp.ts.time))")
 end

@@ -45,3 +45,16 @@ function connect(name="Julia", host="127.0.0.1", port=50000, stream_port=50001):
         return Err(OtherError)
     end
 end
+
+function add_active_vessel!(sc::SpaceCenter; name=nothing)::Result{Spacecraft, SLError}
+    sp = nothing
+    try
+        ves = SCH.ActiveVessel(sc.center)
+        sp = Spacecraft(sc.conn, ves; name=name)
+    catch e
+        @error "Error while connecting" exception=(e, catch_backtrace()) _group=:conn
+        return Err(@sort_krpc_error e)
+    end
+    push!(sc.crafts, sp)
+    Ok(sp)
+end
