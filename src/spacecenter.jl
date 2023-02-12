@@ -34,9 +34,7 @@ function Base.close(sc::SpaceCenter)
     close(sc.conn.conn)
 end
 
-@enum RPCError::UInt8 IOError OtherError
-
-function connect(name="Julia", host="127.0.0.1", port=50000, stream_port=50001)::Result{SpaceCenter, RPCError}
+function connect(name="Julia", host="127.0.0.1", port=50000, stream_port=50001)::Result{SpaceCenter, SLError}
     sc = nothing
     try
         sc = SpaceCenter(name, host, port, stream_port)
